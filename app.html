@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Garage math - calculators</title>
+<style>
+  :root { --accent: #2656a8; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: Georgia, 'Times New Roman', serif; background: #f7f8fa; color: #22262c; line-height: 1.55; }
+  main { max-width: 1100px; margin: 0 auto; padding: 40px 20px 64px; }
+  h1 { font-size: 2rem; margin: 0 0 8px; color: var(--accent); }
+  .lede { margin: 0 0 28px; max-width: 640px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; }
+  section { background: #fff; border: 1px solid #dde2ea; border-radius: 8px; padding: 20px 22px; }
+  h2 { font-size: 1.15rem; margin: 0 0 6px; }
+  .hint { font-size: 0.9rem; color: #5d6a80; margin: 0 0 14px; }
+  label { display: block; font-size: 0.9rem; margin: 10px 0 3px; }
+  input { width: 100%; padding: 8px 10px; font-size: 1rem; border: 1px solid #b9c3d4; border-radius: 5px; font-family: inherit; }
+  button { margin-top: 16px; width: 100%; padding: 11px; background: var(--accent); color: #fff; border: 0; border-radius: 6px; font-size: 1rem; cursor: pointer; font-family: inherit; }
+  button:hover { filter: brightness(1.12); }
+  .out { margin-top: 14px; font-size: 1rem; min-height: 1.4em; }
+  .out.err { color: #a32222; }
+  footer { max-width: 1100px; margin: 0 auto; padding: 0 20px 40px; font-size: 0.85rem; color: #7d8590; }
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Garage math</h1>
+  <p class="lede">Clearances, door squeeze and shelf capacity. Exact arithmetic, every borrowed number labeled.</p>
+  <div class="grid">
+    <section>
+      <h2>Fit plan</h2>
+      <p class="hint">Does the car fit, and by how much.</p>
+      <label for="f-gl">Garage length (cm)</label>
+      <input id="f-gl" type="number" value="500" min="0" step="1">
+      <label for="f-gw">Garage width (cm)</label>
+      <input id="f-gw" type="number" value="300" min="0" step="1">
+      <label for="f-cl">Car length (cm)</label>
+      <input id="f-cl" type="number" value="450" min="0" step="1">
+      <label for="f-cw">Car width (cm)</label>
+      <input id="f-cw" type="number" value="180" min="0" step="1">
+      <button id="f-go">Check the fit</button>
+      <div class="out" id="f-out"></div>
+    </section>
+    <section>
+      <h2>Door plan</h2>
+      <p class="hint">The squeeze through the opening.</p>
+      <label for="d-dw">Door width (cm)</label>
+      <input id="d-dw" type="number" value="240" min="0" step="1">
+      <label for="d-dh">Door height (cm)</label>
+      <input id="d-dh" type="number" value="210" min="0" step="1">
+      <label for="d-cw">Car width (cm)</label>
+      <input id="d-cw" type="number" value="180" min="0" step="1">
+      <label for="d-ch">Car height (cm)</label>
+      <input id="d-ch" type="number" value="160" min="0" step="1">
+      <button id="d-go">Measure the squeeze</button>
+      <div class="out" id="d-out"></div>
+    </section>
+    <section>
+      <h2>Shelf plan</h2>
+      <p class="hint">A wall becomes levels and volume.</p>
+      <label for="s-wall">Wall length (m)</label>
+      <input id="s-wall" type="number" value="3" min="0" step="0.1">
+      <label for="s-depth">Shelf depth (m)</label>
+      <input id="s-depth" type="number" value="0.4" min="0" step="0.05">
+      <label for="s-space">Shelf spacing (m)</label>
+      <input id="s-space" type="number" value="0.35" min="0" step="0.05">
+      <label for="s-height">Wall height (m)</label>
+      <input id="s-height" type="number" value="2.1" min="0" step="0.1">
+      <button id="s-go">Count the shelves</button>
+      <div class="out" id="s-out"></div>
+    </section>
+  </div>
+</main>
+<footer>Built by the app factory. <a href="index.html">About</a> &middot; <a href="https://github.com/iLanis-agent/garagemath">Source</a></footer>
+<script src="engine.js"></script>
+<script>
+function num(id){ return parseFloat(document.getElementById(id).value); }
+function show(id, r, render){
+  var el = document.getElementById(id);
+  if (r.error) { el.textContent = r.error; el.classList.add('err'); }
+  else { el.textContent = render(r); el.classList.remove('err'); }
+}
+document.getElementById('f-go').addEventListener('click', function(){
+  show('f-out', GarageMath.fitPlan(num('f-gl'),num('f-gw'),num('f-cl'),num('f-cw')), GarageMath.renderFit);
+});
+document.getElementById('d-go').addEventListener('click', function(){
+  show('d-out', GarageMath.doorPlan(num('d-dw'),num('d-dh'),num('d-cw'),num('d-ch')), GarageMath.renderDoor);
+});
+document.getElementById('s-go').addEventListener('click', function(){
+  show('s-out', GarageMath.shelfPlan(num('s-wall'),num('s-depth'),num('s-space'),num('s-height')), GarageMath.renderShelf);
+});
+</script>
+</body>
+</html>
